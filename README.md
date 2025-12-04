@@ -7,9 +7,9 @@ Este proyecto está pensado como parte de un portafolio profesional.
 ---
 
 
--**Operaciones básicas:** suma, resta, multiplicación y división  
--**Entrada inteligente:** evita duplicación de puntos decimales  
--**Diseño minimalista:** efecto *glassmorphism* y sombras suaves  
+- **Operaciones básicas:** suma, resta, multiplicación y división  
+- **Entrada inteligente:** evita duplicación de puntos decimales  
+- **Diseño minimalista:** efecto *glassmorphism* y sombras suaves  
 - **Interfaz responsiva:** se adapta a pantallas pequeñas  
 - **Estado visible:** muestra operación y operando anterior  
 - **Botones de control:** AC (borrar todo) y DEL (borrar dígito)  
