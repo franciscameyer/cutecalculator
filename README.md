@@ -1,31 +1,51 @@
-# Cute Calculator
+Cute Calculator
 
-Calculadora web en **HTML, CSS y JavaScript** con estilo glassmorphism, funciones cientificas, historial visible, modo oscuro y funciones secundarias con shift. Pensada para portafolio, con foco en UX y manejo de estado.
+Calculadora web escrita en HTML, CSS y JavaScript, con estilo glassmorphism, funciones científicas, historial integrado, modo oscuro y funciones secundarias mediante botón shift. Diseñada como proyecto de portafolio, con énfasis en UX y manejo de estado.
 
-## Caracteristicas
-- Operaciones basicas: `+`, `-`, `*`, `/`, potencia `x^y` y raiz enesima `yroot`.
-- Funciones: `sin`, `cos`, `tan` (grados), `log`, `ln`, `sqrt`, factorial, cambio de signo, parentesis.
-- Shift para funciones secundarias: `sin⁻¹`, `cos⁻¹`, `tan⁻¹` (grados), `10^x`, `e^x`, `x²`, intercambia `x^y` y `yroot`.
-- Modo oscuro con boton dedicado; ajustes pastel para ambas paletas.
-- Historial con limpiar y toggle de visibilidad.
-- Cursor visible y flechas para mover e insertar digitos en medio.
-- Entrada segura: evita doble punto decimal y protege division por 0.
-- Diseno responsive con glassmorphism.
+Características
 
-## Uso rapido
-1. Abre `index.html` en tu navegador.
-2. Usa el teclado en pantalla; flechas izquierda/derecha mueven el cursor.
-3. Pulsa `shift` para alternar funciones secundarias (trig inversa, `10^x`, `e^x`, `x²`, etc.).
-4. Pulsa `Historial` para mostrar/ocultar; `Limpiar` borra el registro.
-5. `DEL` deshace la ultima accion; `AC` resetea la calculadora.
-6. Pulsa `🌙` para alternar modo oscuro/claro.
+Operaciones básicas: +, -, *, /, potencia (x^y) y raíz enésima (yroot).
 
-## Estructura
-- `index.html`: estructura y botones.
-- `style.css`: estilos y layout.
-- `script.js`: logica de calculo, historial, cursor y atajos.
+Funciones científicas: sin, cos, tan (en grados), log, ln, sqrt, factorial, cambio de signo y paréntesis.
 
-## Notas
-- Las funciones trigonometricas usan grados.
-- Las raices enesimas se ingresan como indice y luego radicando (`yroot`).
-- Factorial solo admite enteros no negativos.
+Funciones secundarias con Shift: sin⁻¹, cos⁻¹, tan⁻¹ (en grados), 10^x, e^x, x², además de intercambio dinámico entre x^y y yroot.
+
+Modo oscuro con botón dedicado, manteniendo paleta pastel en ambas variantes.
+
+Historial con opciones para mostrar/ocultar y limpiar.
+
+Cursor visible y navegación con flechas para editar números en medio de la expresión.
+
+Entrada robusta: evita el doble punto decimal y maneja correctamente división por cero.
+
+Diseño responsive con apariencia glassmorphism.
+
+Uso rápido
+
+Abre index.html en tu navegador.
+
+Utiliza el teclado en pantalla; las flechas izquierda/derecha mueven el cursor en la expresión.
+
+Pulsa Shift para alternar las funciones secundarias (trigonometría inversa, 10^x, e^x, x², etc.).
+
+Usa Historial para mostrar u ocultar el registro; Limpiar borra todas las entradas.
+
+DEL deshace la última acción; AC reinicia la calculadora.
+
+Pulsa 🌙 para cambiar entre modo claro y modo oscuro.
+
+Estructura del proyecto
+
+index.html: estructura de la interfaz y botones.
+
+style.css: estilos, animaciones y layout.
+
+script.js: lógica del cálculo, historial, cursor, shift y controles de entrada.
+
+Notas
+
+Las funciones trigonométricas trabajan en grados.
+
+Para raíces enésimas, se ingresa primero el índice y luego el radicando (yroot).
+
+El factorial opera solo con enteros no negativos.
