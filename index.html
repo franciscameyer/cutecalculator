@@ -3,16 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <title>Calculadora Bonita</title>
+  <link rel="icon" type="image/png" href="favicon.png">
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="app-grid">
     <div class="calculator">
-        <div class="header-bar">
+      <div class="header-bar">
         <img src="carrot.png" class="header-left" alt="carrot">
-         <img src="bunny.gif" class="header-right" alt="bunny">
-        </div>
-        <div class="display"></div>
+        <img src="bunny.gif" class="header-right" alt="bunny">
+      </div>
+      <div class="display">
         <div class="display-top">
           <div class="previous-operand" id="prev"></div>
           <button class="btn btn-ghost btn-history-toggle" id="toggle-history">Historial</button>
@@ -36,20 +37,22 @@
         <button class="btn" data-parenthesis="(">(</button>
         <button class="btn" data-parenthesis=")">)</button>
         <button class="btn btn-ac" data-all-clear>AC</button>
-        <button class="btn" data-undo>DEL</button>
-        <button class="btn" data-operation="/">/</button>
+        <button class="btn btn-ac" data-undo>DEL</button>
+        <button class="btn" data-move="left">&#8592;</button>
+        <button class="btn" data-move="right">&#8594;</button>
+        
 
         <button class="btn" data-number="7">7</button>
         <button class="btn" data-number="8">8</button>
         <button class="btn" data-number="9">9</button>
         <button class="btn" data-operation="*">*</button>
-        <button class="btn" data-move="left">&#8592;</button>
+        <button class="btn" data-operation="/">/</button>
 
         <button class="btn" data-number="4">4</button>
         <button class="btn" data-number="5">5</button>
         <button class="btn" data-number="6">6</button>
         <button class="btn" data-operation="-">-</button>
-        <button class="btn" data-move="right">&#8594;</button>
+        
 
         <button class="btn" data-number="1">1</button>
         <button class="btn" data-number="2">2</button>
