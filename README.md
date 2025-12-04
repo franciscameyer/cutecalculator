@@ -1,51 +1,77 @@
-Cute Calculator
+# Cute Calculator
 
-Calculadora web escrita en HTML, CSS y JavaScript, con estilo glassmorphism, funciones científicas, historial integrado, modo oscuro y funciones secundarias mediante botón shift. Diseñada como proyecto de portafolio, con énfasis en UX y manejo de estado.
+Calculadora web desarrollada en **HTML, CSS y JavaScript**, con un
+diseño basado en glassmorphism y funcionalidades avanzadas orientadas a
+mejorar la experiencia de usuario. Incluye soporte para operaciones
+científicas, funciones secundarias mediante un modo *Shift*, historial
+interactivo, cursor editable y modo oscuro. Este proyecto está diseñado
+como pieza de portafolio, demostrando manejo de interfaz, estructura
+lógica y control de estado.
 
-Características
+## Características
 
-Operaciones básicas: +, -, *, /, potencia (x^y) y raíz enésima (yroot).
+### Operaciones principales
 
-Funciones científicas: sin, cos, tan (en grados), log, ln, sqrt, factorial, cambio de signo y paréntesis.
+-   Suma, resta, multiplicación y división.
+-   Potencias (`x^y`) y raíces enésimas (`yroot`).
+-   Cambio de signo y uso de paréntesis.
+-   Control del cursor para editar números en cualquier posición.
 
-Funciones secundarias con Shift: sin⁻¹, cos⁻¹, tan⁻¹ (en grados), 10^x, e^x, x², además de intercambio dinámico entre x^y y yroot.
+### Funciones científicas
 
-Modo oscuro con botón dedicado, manteniendo paleta pastel en ambas variantes.
+-   Funciones trigonométricas: `sin`, `cos`, `tan` (en grados).
+-   Logaritmos: `log` y `ln`.
+-   Raíz cuadrada (`sqrt`).
+-   Factorial.
+-   Protección contra condiciones inválidas (como división entre cero).
 
-Historial con opciones para mostrar/ocultar y limpiar.
+### Funciones secundarias con Shift
 
-Cursor visible y navegación con flechas para editar números en medio de la expresión.
+El botón *Shift* permite alternar hacia un conjunto adicional de
+operaciones: - Trigonometría inversa: `arcsin`, `arccos`, `arctan`. -
+Potencias especiales: `10^x` y `e^x`. - Operación de cuadrado (`x²`). -
+Intercambio dinámico entre `x^y` y `yroot`.
 
-Entrada robusta: evita el doble punto decimal y maneja correctamente división por cero.
+### Interfaz y experiencia de usuario
 
-Diseño responsive con apariencia glassmorphism.
+-   Estilo visual glassmorphism completamente responsivo.
+-   Historial con panel ocultable y opción para limpiar entradas.
+-   Cursor visible con navegación mediante flechas.
+-   Modo oscuro opcional, con adaptación estética completa.
+-   Evita entradas inválidas como múltiples puntos decimales.
 
-Uso rápido
+## Uso rápido
 
-Abre index.html en tu navegador.
+1.  Abrir el archivo `index.html` en el navegador.
+2.  Utilizar el teclado en pantalla para ingresar operaciones.
+3.  Usar las flechas izquierda y derecha para mover el cursor dentro de
+    la expresión.
+4.  Activar *Shift* para habilitar las funciones secundarias.
+5.  Mostrar u ocultar el historial mediante el botón correspondiente.
+6.  Emplear `DEL` para deshacer una acción y `AC` para reiniciar la
+    calculadora.
+7.  Activar el modo oscuro desde su botón dedicado.
 
-Utiliza el teclado en pantalla; las flechas izquierda/derecha mueven el cursor en la expresión.
+## Estructura del proyecto
 
-Pulsa Shift para alternar las funciones secundarias (trigonometría inversa, 10^x, e^x, x², etc.).
+-   **index.html**\
+    Contiene la estructura visual de la calculadora, sus botones y el
+    panel de historial.
 
-Usa Historial para mostrar u ocultar el registro; Limpiar borra todas las entradas.
+-   **style.css**\
+    Define la apariencia, paleta de colores, efectos glassmorphism,
+    adaptabilidad móvil y estilos del modo oscuro.
 
-DEL deshace la última acción; AC reinicia la calculadora.
+-   **script.js**\
+    Implementa la lógica principal: operaciones matemáticas, manejo del
+    historial, cursor, funciones de Shift, validaciones y gestión de
+    eventos.
 
-Pulsa 🌙 para cambiar entre modo claro y modo oscuro.
+## Notas adicionales
 
-Estructura del proyecto
-
-index.html: estructura de la interfaz y botones.
-
-style.css: estilos, animaciones y layout.
-
-script.js: lógica del cálculo, historial, cursor, shift y controles de entrada.
-
-Notas
-
-Las funciones trigonométricas trabajan en grados.
-
-Para raíces enésimas, se ingresa primero el índice y luego el radicando (yroot).
-
-El factorial opera solo con enteros no negativos.
+-   Todas las funciones trigonométricas e inversas operan en **grados**.
+-   Para raíces enésimas, se ingresa primero el índice y luego el valor
+    (`yroot`).
+-   El factorial admite únicamente enteros no negativos.
+-   El historial se almacena solo durante la sesión y no persiste entre
+    recargas.
