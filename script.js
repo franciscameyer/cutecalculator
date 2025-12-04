@@ -8,6 +8,9 @@ class Calculator {
     this.history = [];
     this.undoStack = [];
     this.isShiftActive = false;
+    this.lastExpression = "";
+    this.pendingFunction = null;
+    this.pendingFunctionLabel = "";
     this.clear();
     this.renderHistory();
     this.updateHistoryVisibility();
@@ -20,12 +23,20 @@ class Calculator {
     this.currentOperand = "0";
     this.previousOperand = "";
     this.operation = undefined;
+    this.lastExpression = "";
+    this.pendingFunction = null;
+    this.pendingFunctionLabel = "";
     this.cursorIndex = this.currentOperand.length;
     this.updateDisplay();
   }
 
   appendNumber(number) {
     this.saveState();
+    this.lastExpression = "";
+    if (this.pendingFunction && (this.currentOperand === "0" || this.currentOperand === "")) {
+      this.currentOperand = "";
+      this.cursorIndex = 0;
+    }
     if (number === "." && this.currentOperand.includes(".")) return;
     if (this.currentOperand === "0" && number !== ".") {
       this.currentOperand = "";
@@ -58,88 +69,40 @@ class Calculator {
 
   applyFunction(funcName) {
     this.saveState();
-    const value = this.parseOperand(this.currentOperand);
-    if (isNaN(value)) return;
-    const toRadians = (deg) => (deg * Math.PI) / 180;
-    const toDegrees = (rad) => (rad * 180) / Math.PI;
-    let result;
-    let expression;
-
-    switch (funcName) {
-      case "sin":
-        result = Math.sin(toRadians(value));
-        expression = `sin(${value})`;
-        break;
-      case "cos":
-        result = Math.cos(toRadians(value));
-        expression = `cos(${value})`;
-        break;
-      case "tan":
-        result = Math.tan(toRadians(value));
-        expression = `tan(${value})`;
-        break;
-      case "asin":
-        result = value < -1 || value > 1 ? "Error" : toDegrees(Math.asin(value));
-        expression = `asin(${value})`;
-        break;
-      case "acos":
-        result = value < -1 || value > 1 ? "Error" : toDegrees(Math.acos(value));
-        expression = `acos(${value})`;
-        break;
-      case "atan":
-        result = toDegrees(Math.atan(value));
-        expression = `atan(${value})`;
-        break;
-      case "log":
-        result = value <= 0 ? "Error" : Math.log10(value);
-        expression = `log(${value})`;
-        break;
-      case "ln":
-        result = value <= 0 ? "Error" : Math.log(value);
-        expression = `ln(${value})`;
-        break;
-      case "exp10":
-        result = Math.pow(10, value);
-        expression = `10^(${value})`;
-        break;
-      case "exp":
-        result = Math.exp(value);
-        expression = `e^(${value})`;
-        break;
-      case "sqrt":
-        result = value < 0 ? "Error" : Math.sqrt(value);
-        expression = `sqrt(${value})`;
-        break;
-      case "square":
-        result = Math.pow(value, 2);
-        expression = `(${value})^2`;
-        break;
-      case "fact":
-        if (!Number.isInteger(value) || value < 0) {
-          result = "Error";
-        } else {
-          result = this.factorial(value);
-        }
-        expression = `${value}!`;
-        break;
-      default:
-        return;
+    const isInitialOperand = this.isOperandInInitialState();
+    if (isInitialOperand) {
+      this.pendingFunction = funcName;
+      this.pendingFunctionLabel = this.formatFunctionLabel(funcName);
+      this.lastExpression = "";
+      this.updateDisplay();
+      return;
     }
 
+    const value = this.parseOperand(this.currentOperand);
+    if (isNaN(value)) return;
+    const { result, expression } = this.evaluateUnaryFunction(funcName, value);
     this.addToHistory(expression, result);
+    this.lastExpression = expression;
     this.currentOperand = result.toString();
     this.cursorIndex = this.currentOperand.length;
     this.previousOperand = "";
     this.operation = undefined;
+    this.pendingFunction = null;
+    this.pendingFunctionLabel = "";
     this.updateDisplay();
   }
 
   chooseOperation(operation) {
-    if (this.currentOperand === "") return;
     this.saveState();
+    if (this.pendingFunction) {
+      const applied = this.applyPendingFunctionToCurrent();
+      if (!applied) return;
+    }
+    if (this.currentOperand === "") return;
     if (this.previousOperand !== "") {
       this.compute();
     }
+    this.lastExpression = "";
     this.operation = operation;
     this.previousOperand = this.currentOperand;
     this.currentOperand = "";
@@ -149,9 +112,19 @@ class Calculator {
 
   compute() {
     this.saveState();
+    if (this.pendingFunction) {
+      const applied = this.applyPendingFunctionToCurrent();
+      if (!applied) return;
+    }
+    if (!this.operation) {
+      this.previousOperand = "";
+      this.updateDisplay();
+      return;
+    }
     const prev = this.parseOperand(this.previousOperand);
+    this.lastExpression = "";
     const current = this.parseOperand(this.currentOperand);
-    if (isNaN(prev) || isNaN(current) || !this.operation) return;
+    if (isNaN(prev) || isNaN(current)) return;
     let result;
 
     switch (this.operation) {
@@ -239,6 +212,10 @@ class Calculator {
 
     if (this.operation != null && this.previousOperand !== "") {
       this.previousTextElement.textContent = `${this.previousOperand} ${this.operation}`;
+    } else if (this.pendingFunctionLabel && !this.lastExpression) {
+      this.previousTextElement.textContent = this.pendingFunctionLabel;
+    } else if (this.lastExpression) {
+      this.previousTextElement.textContent = this.lastExpression;
     } else {
       this.previousTextElement.textContent = "";
     }
@@ -260,6 +237,10 @@ class Calculator {
     return parseFloat(cleaned);
   }
 
+  isOperandInInitialState() {
+    return this.currentOperand === "0" || this.currentOperand === "";
+  }
+
   factorial(n) {
     let res = 1;
     for (let i = 2; i <= n; i += 1) {
@@ -267,6 +248,94 @@ class Calculator {
       if (!isFinite(res)) return "Error";
     }
     return res;
+  }
+
+  toRadians(deg) {
+    return (deg * Math.PI) / 180;
+  }
+
+  toDegrees(rad) {
+    return (rad * 180) / Math.PI;
+  }
+
+  formatFunctionLabel(funcName) {
+    switch (funcName) {
+      case "sin":
+      case "cos":
+      case "tan":
+      case "asin":
+      case "acos":
+      case "atan":
+      case "log":
+      case "ln":
+      case "sqrt":
+      case "square":
+      case "fact":
+        return `${funcName}(`;
+      case "exp10":
+        return "10^(";
+      case "exp":
+        return "e^(";
+      default:
+        return `${funcName}(`;
+    }
+  }
+
+  evaluateUnaryFunction(funcName, value) {
+    switch (funcName) {
+      case "sin":
+        return { result: Math.sin(this.toRadians(value)), expression: `sin(${value})` };
+      case "cos":
+        return { result: Math.cos(this.toRadians(value)), expression: `cos(${value})` };
+      case "tan":
+        return { result: Math.tan(this.toRadians(value)), expression: `tan(${value})` };
+      case "asin":
+        return {
+          result: value < -1 || value > 1 ? "Error" : this.toDegrees(Math.asin(value)),
+          expression: `asin(${value})`,
+        };
+      case "acos":
+        return {
+          result: value < -1 || value > 1 ? "Error" : this.toDegrees(Math.acos(value)),
+          expression: `acos(${value})`,
+        };
+      case "atan":
+        return { result: this.toDegrees(Math.atan(value)), expression: `atan(${value})` };
+      case "log":
+        return { result: value <= 0 ? "Error" : Math.log10(value), expression: `log(${value})` };
+      case "ln":
+        return { result: value <= 0 ? "Error" : Math.log(value), expression: `ln(${value})` };
+      case "exp10":
+        return { result: Math.pow(10, value), expression: `10^(${value})` };
+      case "exp":
+        return { result: Math.exp(value), expression: `e^(${value})` };
+      case "sqrt":
+        return { result: value < 0 ? "Error" : Math.sqrt(value), expression: `sqrt(${value})` };
+      case "square":
+        return { result: Math.pow(value, 2), expression: `(${value})^2` };
+      case "fact":
+        return {
+          result: !Number.isInteger(value) || value < 0 ? "Error" : this.factorial(value),
+          expression: `${value}!`,
+        };
+      default:
+        return { result: value, expression: `${funcName}(${value})` };
+    }
+  }
+
+  applyPendingFunctionToCurrent() {
+    if (!this.pendingFunction) return false;
+    const value = this.parseOperand(this.currentOperand);
+    if (isNaN(value)) return false;
+    const { result, expression } = this.evaluateUnaryFunction(this.pendingFunction, value);
+    this.addToHistory(expression, result);
+    this.lastExpression = expression;
+    this.currentOperand = result.toString();
+    this.cursorIndex = this.currentOperand.length;
+    this.pendingFunction = null;
+    this.pendingFunctionLabel = "";
+    this.updateDisplay();
+    return typeof result === "number" && isFinite(result);
   }
 
   insertAtCursor(value) {
@@ -284,6 +353,9 @@ class Calculator {
       operation: this.operation,
       history: this.history.map((item) => ({ ...item })),
       cursorIndex: this.cursorIndex,
+      lastExpression: this.lastExpression,
+      pendingFunction: this.pendingFunction,
+      pendingFunctionLabel: this.pendingFunctionLabel,
     };
     this.undoStack.push(snapshot);
     if (this.undoStack.length > 25) {
@@ -299,6 +371,9 @@ class Calculator {
     this.operation = snapshot.operation;
     this.history = snapshot.history;
     this.cursorIndex = snapshot.cursorIndex ?? this.currentOperand.length;
+    this.lastExpression = snapshot.lastExpression ?? "";
+    this.pendingFunction = snapshot.pendingFunction ?? null;
+    this.pendingFunctionLabel = snapshot.pendingFunctionLabel ?? "";
     this.updateDisplay();
     this.renderHistory();
   }
