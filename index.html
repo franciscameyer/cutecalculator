@@ -16,7 +16,10 @@
       <div class="display">
         <div class="display-top">
           <div class="previous-operand" id="prev"></div>
-          <button class="btn btn-ghost btn-history-toggle" id="toggle-history">Historial</button>
+          <div class="top-actions">
+            <button class="btn btn-ghost btn-dark-toggle" id="toggle-dark" aria-pressed="false">🌙</button>
+            <button class="btn btn-ghost btn-history-toggle" id="toggle-history">Historial</button>
+          </div>
         </div>
         <div class="current-operand" id="curr">0</div>
       </div>
@@ -28,6 +31,7 @@
         <button class="btn btn-func" data-function="log">log</button>
         <button class="btn btn-func" data-function="ln">ln</button>
 
+        <button class="btn btn-func btn-shift" data-shift="true" aria-pressed="false">shift</button>
         <button class="btn btn-func" data-function="sqrt">sqrt</button>
         <button class="btn btn-func" data-operation="^">x^y</button>
         <button class="btn btn-func" data-operation="root">yroot</button>

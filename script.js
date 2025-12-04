@@ -7,6 +7,7 @@ class Calculator {
     this.historyOpen = false;
     this.history = [];
     this.undoStack = [];
+    this.isShiftActive = false;
     this.clear();
     this.renderHistory();
     this.updateHistoryVisibility();
@@ -26,13 +27,10 @@ class Calculator {
   appendNumber(number) {
     this.saveState();
     if (number === "." && this.currentOperand.includes(".")) return;
-
-    // reemplaza el 0 inicial si se escribe otro numero
     if (this.currentOperand === "0" && number !== ".") {
       this.currentOperand = "";
       this.cursorIndex = 0;
     }
-
     this.insertAtCursor(number.toString());
   }
 
@@ -48,7 +46,6 @@ class Calculator {
   toggleSign() {
     this.saveState();
     if (this.currentOperand === "0") return;
-
     if (this.currentOperand.startsWith("-")) {
       this.currentOperand = this.currentOperand.slice(1);
       this.cursorIndex = Math.max(this.cursorIndex - 1, 0);
@@ -63,9 +60,8 @@ class Calculator {
     this.saveState();
     const value = this.parseOperand(this.currentOperand);
     if (isNaN(value)) return;
-
-    // trig en grados para uso rapido
     const toRadians = (deg) => (deg * Math.PI) / 180;
+    const toDegrees = (rad) => (rad * 180) / Math.PI;
     let result;
     let expression;
 
@@ -82,6 +78,18 @@ class Calculator {
         result = Math.tan(toRadians(value));
         expression = `tan(${value})`;
         break;
+      case "asin":
+        result = value < -1 || value > 1 ? "Error" : toDegrees(Math.asin(value));
+        expression = `asin(${value})`;
+        break;
+      case "acos":
+        result = value < -1 || value > 1 ? "Error" : toDegrees(Math.acos(value));
+        expression = `acos(${value})`;
+        break;
+      case "atan":
+        result = toDegrees(Math.atan(value));
+        expression = `atan(${value})`;
+        break;
       case "log":
         result = value <= 0 ? "Error" : Math.log10(value);
         expression = `log(${value})`;
@@ -90,9 +98,21 @@ class Calculator {
         result = value <= 0 ? "Error" : Math.log(value);
         expression = `ln(${value})`;
         break;
+      case "exp10":
+        result = Math.pow(10, value);
+        expression = `10^(${value})`;
+        break;
+      case "exp":
+        result = Math.exp(value);
+        expression = `e^(${value})`;
+        break;
       case "sqrt":
         result = value < 0 ? "Error" : Math.sqrt(value);
         expression = `sqrt(${value})`;
+        break;
+      case "square":
+        result = Math.pow(value, 2);
+        expression = `(${value})^2`;
         break;
       case "fact":
         if (!Number.isInteger(value) || value < 0) {
@@ -116,12 +136,10 @@ class Calculator {
 
   chooseOperation(operation) {
     if (this.currentOperand === "") return;
-
     this.saveState();
     if (this.previousOperand !== "") {
       this.compute();
     }
-
     this.operation = operation;
     this.previousOperand = this.currentOperand;
     this.currentOperand = "";
@@ -133,9 +151,7 @@ class Calculator {
     this.saveState();
     const prev = this.parseOperand(this.previousOperand);
     const current = this.parseOperand(this.currentOperand);
-
     if (isNaN(prev) || isNaN(current) || !this.operation) return;
-
     let result;
 
     switch (this.operation) {
@@ -155,7 +171,7 @@ class Calculator {
         result = Math.pow(prev, current);
         break;
       case "root":
-        if (current < 0 && prev % 2 === 0) {
+        if (prev === 0 || (current < 0 && prev % 2 === 0)) {
           result = "Error";
         } else {
           result = Math.pow(current, 1 / prev);
@@ -167,7 +183,6 @@ class Calculator {
 
     const expression = `${this.previousOperand} ${this.operation} ${this.currentOperand}`;
     this.addToHistory(expression, result);
-
     this.currentOperand = result.toString();
     this.cursorIndex = this.currentOperand.length;
     this.operation = undefined;
@@ -199,7 +214,6 @@ class Calculator {
 
   renderHistory() {
     this.historyListElement.innerHTML = "";
-
     if (this.history.length === 0) {
       const emptyItem = document.createElement("li");
       emptyItem.className = "history-empty";
@@ -292,15 +306,47 @@ class Calculator {
   escapeHTML(str) {
     return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
   }
+
+  setShiftControls(shiftButton, shiftMappings) {
+    this.shiftButton = shiftButton;
+    this.shiftMappings = (shiftMappings || []).filter((item) => item.element);
+    this.applyShiftState();
+  }
+
+  toggleShift() {
+    this.isShiftActive = !this.isShiftActive;
+    this.applyShiftState();
+  }
+
+  applyShiftState() {
+    if (!this.shiftMappings) return;
+    if (this.shiftButton) {
+      this.shiftButton.classList.toggle("btn-shift-active", this.isShiftActive);
+      this.shiftButton.setAttribute("aria-pressed", this.isShiftActive ? "true" : "false");
+    }
+    this.shiftMappings.forEach((item) => {
+      const state = this.isShiftActive ? item.secondary : item.primary;
+      if (state.label !== undefined) {
+        item.element.textContent = state.label;
+      }
+      if (state.function) {
+        item.element.setAttribute("data-function", state.function);
+      }
+      if (state.operation) {
+        item.element.setAttribute("data-operation", state.operation);
+      }
+    });
+  }
 }
 
-// --- wiring con el DOM --- //
 const prevTextElement = document.getElementById("prev");
 const currentTextElement = document.getElementById("curr");
 const historyListElement = document.getElementById("history-list");
 const historyPanelElement = document.getElementById("history-panel");
 const clearHistoryButton = document.getElementById("clear-history");
 const toggleHistoryButton = document.getElementById("toggle-history");
+const darkToggleButton = document.getElementById("toggle-dark");
+const shiftButton = document.querySelector('[data-shift="true"]');
 
 const calculator = new Calculator(
   prevTextElement,
@@ -362,3 +408,78 @@ document.querySelectorAll("[data-move]").forEach((button) => {
     calculator.moveCursor(button.getAttribute("data-move"));
   });
 });
+
+if (shiftButton) {
+  const sinButton = document.querySelector('[data-function="sin"]');
+  const cosButton = document.querySelector('[data-function="cos"]');
+  const tanButton = document.querySelector('[data-function="tan"]');
+  const logButton = document.querySelector('[data-function="log"]');
+  const lnButton = document.querySelector('[data-function="ln"]');
+  const sqrtButton = document.querySelector('[data-function="sqrt"]');
+  const powerButton = document.querySelector('[data-operation="^"]');
+  const rootButton = document.querySelector('[data-operation="root"]');
+  const factButton = document.querySelector('[data-function="fact"]');
+
+  const shiftMappings = [
+    {
+      element: sinButton,
+      primary: { label: "sin", function: "sin" },
+      secondary: { label: "sin⁻¹", function: "asin" },
+    },
+    {
+      element: cosButton,
+      primary: { label: "cos", function: "cos" },
+      secondary: { label: "cos⁻¹", function: "acos" },
+    },
+    {
+      element: tanButton,
+      primary: { label: "tan", function: "tan" },
+      secondary: { label: "tan⁻¹", function: "atan" },
+    },
+    {
+      element: logButton,
+      primary: { label: "log", function: "log" },
+      secondary: { label: "10^x", function: "exp10" },
+    },
+    {
+      element: lnButton,
+      primary: { label: "ln", function: "ln" },
+      secondary: { label: "e^x", function: "exp" },
+    },
+    {
+      element: sqrtButton,
+      primary: { label: "sqrt", function: "sqrt" },
+      secondary: { label: "x²", function: "square" },
+    },
+    {
+      element: powerButton,
+      primary: { label: "x^y", operation: "^" },
+      secondary: { label: "y√x", operation: "root" },
+    },
+    {
+      element: rootButton,
+      primary: { label: "yroot", operation: "root" },
+      secondary: { label: "x^y", operation: "^" },
+    },
+    {
+      element: factButton,
+      primary: { label: "n!", function: "fact" },
+      secondary: { label: "n!", function: "fact" },
+    },
+  ];
+
+  calculator.setShiftControls(shiftButton, shiftMappings);
+  shiftButton.addEventListener("click", () => {
+    calculator.toggleShift();
+  });
+}
+
+if (darkToggleButton) {
+  let isDarkMode = false;
+  darkToggleButton.addEventListener("click", () => {
+    isDarkMode = !isDarkMode;
+    document.body.classList.toggle("dark-mode", isDarkMode);
+    darkToggleButton.setAttribute("aria-pressed", isDarkMode ? "true" : "false");
+    darkToggleButton.classList.toggle("dark-toggle-active", isDarkMode);
+  });
+}
