@@ -6,34 +6,70 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="calculator">
-    <div class="display">
-      <div class="previous-operand" id="prev"></div>
-      <div class="current-operand" id="curr">0</div>
+  <div class="app-grid">
+    <div class="calculator">
+        <div class="header-bar">
+        <img src="carrot.png" class="header-left" alt="carrot">
+         <img src="bunny.gif" class="header-right" alt="bunny">
+        </div>
+        <div class="display"></div>
+        <div class="display-top">
+          <div class="previous-operand" id="prev"></div>
+          <button class="btn btn-ghost btn-history-toggle" id="toggle-history">Historial</button>
+        </div>
+        <div class="current-operand" id="curr">0</div>
+      </div>
+
+      <div class="buttons">
+        <button class="btn btn-func" data-function="sin">sin</button>
+        <button class="btn btn-func" data-function="cos">cos</button>
+        <button class="btn btn-func" data-function="tan">tan</button>
+        <button class="btn btn-func" data-function="log">log</button>
+        <button class="btn btn-func" data-function="ln">ln</button>
+
+        <button class="btn btn-func" data-function="sqrt">sqrt</button>
+        <button class="btn btn-func" data-operation="^">x^y</button>
+        <button class="btn btn-func" data-operation="root">yroot</button>
+        <button class="btn btn-func" data-function="fact">n!</button>
+        <button class="btn" data-sign>+/-</button>
+
+        <button class="btn" data-parenthesis="(">(</button>
+        <button class="btn" data-parenthesis=")">)</button>
+        <button class="btn btn-ac" data-all-clear>AC</button>
+        <button class="btn" data-undo>DEL</button>
+        <button class="btn" data-operation="/">/</button>
+
+        <button class="btn" data-number="7">7</button>
+        <button class="btn" data-number="8">8</button>
+        <button class="btn" data-number="9">9</button>
+        <button class="btn" data-operation="*">*</button>
+        <button class="btn" data-move="left">&#8592;</button>
+
+        <button class="btn" data-number="4">4</button>
+        <button class="btn" data-number="5">5</button>
+        <button class="btn" data-number="6">6</button>
+        <button class="btn" data-operation="-">-</button>
+        <button class="btn" data-move="right">&#8594;</button>
+
+        <button class="btn" data-number="1">1</button>
+        <button class="btn" data-number="2">2</button>
+        <button class="btn" data-number="3">3</button>
+        <button class="btn" data-operation="+">+</button>
+        <button class="btn btn-equals" data-equals>=</button>
+
+        <button class="btn btn-zero" data-number="0">0</button>
+        <button class="btn" data-number=".">.</button>
+      </div>
     </div>
-    <div class="buttons">
-      <button class="btn btn-ac" data-all-clear>AC</button>
-      <button class="btn" data-delete>DEL</button>
-      <button class="btn" data-operation="÷">÷</button>
-      <button class="btn" data-operation="*">×</button>
 
-      <button class="btn" data-number="7">7</button>
-      <button class="btn" data-number="8">8</button>
-      <button class="btn" data-number="9">9</button>
-      <button class="btn" data-operation="-">−</button>
-
-      <button class="btn" data-number="4">4</button>
-      <button class="btn" data-number="5">5</button>
-      <button class="btn" data-number="6">6</button>
-      <button class="btn" data-operation="+">+</button>
-
-      <button class="btn" data-number="1">1</button>
-      <button class="btn" data-number="2">2</button>
-      <button class="btn" data-number="3">3</button>
-      <button class="btn btn-equals" data-equals>=</button>
-
-      <button class="btn btn-zero" data-number="0">0</button>
-      <button class="btn" data-number=".">.</button>
+    <div class="history" id="history-panel" aria-hidden="true">
+      <div class="history-header">
+        <h2>Historial</h2>
+        <button class="btn btn-ghost" id="clear-history">Limpiar</button>
+      </div>
+      <ul id="history-list" class="history-list">
+        <li class="history-empty">Sin operaciones aun</li>
+      </ul>
     </div>
   </div>
 
