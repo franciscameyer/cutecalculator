@@ -13,7 +13,7 @@ Este proyecto está pensado como parte de un portafolio profesional.
 - **Interfaz responsiva:** se adapta a pantallas pequeñas  
 - **Estado visible:** muestra operación y operando anterior  
 - **Botones de control:** AC (borrar todo) y DEL (borrar dígito)  
--**Cálculo encadenado:** permite continuar operaciones sin resetear
+- **Cálculo encadenado:** permite continuar operaciones sin resetear
 
 ---
 
